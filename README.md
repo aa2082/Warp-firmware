@@ -1,3 +1,17 @@
+#Some of my notes:
+To run:
+	export ARMGCC_DIR=/usr
+	make warp
+	make load-warp
+
+open a new terminal and run below to access warp
+
+	JLinkRTTClient
+
+To get sensor data:
+
+
+
 # Baseline firmware for the [Warp](https://github.com/physical-computation/Warp-hardware) family of hardware platforms
 This is the firmware for the [Warp hardware](https://github.com/physical-computation/Warp-hardware) and its publicly available and unpublished derivatives. This firmware also runs on the Freescale/NXP FRDM KL03 evaluation board which we use for teaching at the University of Cambridge. When running on platforms other than Warp, only the sensors available in the corresponding hardware platform are accessible.
 

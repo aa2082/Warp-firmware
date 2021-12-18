@@ -105,6 +105,11 @@
 	volatile WarpI2CDeviceState			deviceMMA8451QState;
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+	#include "devINA219.h"
+	volatile WarpI2CDeviceState			deviceINA219State;
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
 	#include "devLPS25H.h"
 	volatile WarpI2CDeviceState			deviceLPS25HState;
@@ -1605,8 +1610,12 @@ main(void)
 	#endif
 
 	#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
-//		initMMA8451Q(	0x1C	/* i2cAddress */,	&deviceMMA8451QState,		kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 		initMMA8451Q(	0x1D	/* i2cAddress */,		kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
+	#endif
+
+	#if (WARP_BUILD_ENABLE_DEVINA219)
+		warpPrint("init INA");
+		initINA219(	0x40	/* i2cAddress */,		kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 	#endif
 
 	#if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -2795,6 +2804,12 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 					0x01/* Normal read 8bit, 800Hz, normal, active mode */
 					);
 	#endif
+	#if (WARP_BUILD_ENABLE_DEVINA219)
+	warpPrint("configuring INA");
+	numberOfConfigErrors += configureSensorINA219(0x00,/* Payload: Disable FIFO */
+					0x01/* Normal read 8bit, 800Hz, normal, active mode */
+					);
+	#endif
 	#if (WARP_BUILD_ENABLE_DEVMAG3110)
 	numberOfConfigErrors += configureSensorMAG3110(	0x00,/*	Payload: DR 000, OS 00, 80Hz, ADC 1280, Full 16bit, standby mode to set up register*/
 					0xA0,/*	Payload: AUTO_MRST_EN enable, RAW value without offset */
@@ -2876,6 +2891,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 			warpPrint(" MMA8451 x, MMA8451 y, MMA8451 z,");
 		#endif
 
+		#if (WARP_BUILD_ENABLE_DEVINA219)
+			warpPrint(" CURRENT");
+		#endif
+
 		#if (WARP_BUILD_ENABLE_DEVMAG3110)
 			warpPrint(" MAG3110 x, MAG3110 y, MAG3110 z, MAG3110 Temp,");
 		#endif
@@ -2909,7 +2928,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 	do
 	{
 		warpPrint("%12u, %12d, %6d,\t\t", readingCount, RTC->TSR, RTC->TPR);
-
+		
 		#if (WARP_BUILD_ENABLE_DEVADXL362)
 			printSensorDataADXL362(hexModeFlag);
 		#endif
@@ -2917,11 +2936,15 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 		#if (WARP_BUILD_ENABLE_DEVAMG8834)
 			printSensorDataAMG8834(hexModeFlag);
 		#endif
-
+		
 		#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 			printSensorDataMMA8451Q(hexModeFlag);
 		#endif
 
+		#if (WARP_BUILD_ENABLE_DEVINA219)
+			printSensorDataINA219(hexModeFlag);
+		#endif
+		
 		#if (WARP_BUILD_ENABLE_DEVMAG3110)
 			printSensorDataMAG3110(hexModeFlag);
 		#endif
@@ -2947,7 +2970,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 		#if (WARP_BUILD_ENABLE_DEVHDC1000)
 			printSensorDataHDC1000(hexModeFlag);
 		#endif
-
+		
 		warpPrint(" %12d, %6d, %2u\n", RTC->TSR, RTC->TPR, numberOfConfigErrors);
 
 		if (menuDelayBetweenEachRun > 0)
