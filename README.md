@@ -1,5 +1,6 @@
 #Some of my notes:
 To run:
+	
 	export ARMGCC_DIR=/usr
 	make warp
 	make load-warp
@@ -10,6 +11,7 @@ open a new terminal and run below to access warp
 
 To get sensor data:
 
+	z
 
 
 # Baseline firmware for the [Warp](https://github.com/physical-computation/Warp-hardware) family of hardware platforms
